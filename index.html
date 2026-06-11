@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MiNegocio — Gestiona tu negocio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="minegocio.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ══ BARRA LATERAL ══ -->
+  <aside class="barra-lateral">
+    <div class="barra-lateral-logo">
+      <div class="barra-lateral-logo-texto">🏪 MiNegocio</div>
+      <div class="barra-lateral-logo-subtitulo">Panel de gestión</div>
+    </div>
+    <nav class="barra-lateral-nav">
+      <button class="boton-nav activo" id="nav-inicio"     onclick="irVista('inicio')">
+        <span class="nav-icono">🏠</span> Inicio
+      </button>
+      <button class="boton-nav"        id="nav-inventario" onclick="irVista('inventario')">
+        <span class="nav-icono">📦</span> Inventario
+      </button>
+      <button class="boton-nav"        id="nav-venta"      onclick="irVista('venta')">
+        <span class="nav-icono">➕</span> Registrar venta
+      </button>
+      <button class="boton-nav"        id="nav-reportes"   onclick="irVista('reportes')">
+        <span class="nav-icono">📊</span> Reportes
+      </button>
+    </nav>
+    <div class="barra-lateral-pie">© 2026 MiNegocio<br>Hecho para pequeños negocios</div>
+  </aside>
+
+  <!-- ══ ÁREA PRINCIPAL ══ -->
+  <div class="principal">
+
+    <!-- BARRA SUPERIOR -->
+    <div class="barra-superior">
+      <div>
+        <div class="barra-superior-titulo"    id="topbar-titulo">Inicio</div>
+        <div class="barra-superior-subtitulo" id="topbar-subtitulo">Bienvenido a tu negocio</div>
+      </div>
+      <div class="barra-superior-derecha">
+        <div class="barra-superior-fecha" id="fecha-hoy"></div>
+      </div>
+    </div>
+
+    <div class="contenido">
+
+      <!-- ══ VISTA: INICIO ══ -->
+      <div class="vista activa" id="vista-inicio">
+
+        <div class="fila-estadisticas">
+          <div class="tarjeta-estadistica verde">
+            <div class="estadistica-etiqueta">💰 Ventas hoy</div>
+            <div class="estadistica-valor" id="stat-total">$0</div>
+            <div class="estadistica-pista" id="stat-cant">0 ventas</div>
+          </div>
+          <div class="tarjeta-estadistica">
+            <div class="estadistica-etiqueta">📦 Productos</div>
+            <div class="estadistica-valor" id="stat-prods">0</div>
+            <div class="estadistica-pista" id="stat-bajo">Sin stock bajo</div>
+          </div>
+          <div class="tarjeta-estadistica">
+            <div class="estadistica-etiqueta">📈 Total histórico</div>
+            <div class="estadistica-valor" id="stat-historico">$0</div>
+            <div class="estadistica-pista" id="stat-ventas-total">0 ventas totales</div>
+          </div>
+        </div>
+
+        <div class="grilla-2">
+          <div class="tarjeta">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">⚡ Acciones rápidas</div></div>
+            <div class="tarjeta-cuerpo">
+              <button class="boton-accion verde" onclick="irVista('venta')">
+                <div class="accion-icono">➕</div>
+                <div>
+                  <div class="accion-texto-titulo">Registrar venta</div>
+                  <div class="accion-texto-subtitulo">Toca para vender</div>
+                </div>
+              </button>
+              <button class="boton-accion" onclick="irVista('inventario')">
+                <div class="accion-icono">📦</div>
+                <div>
+                  <div class="accion-texto-titulo">Ver inventario</div>
+                  <div class="accion-texto-subtitulo" id="pista-inventario">Cargando...</div>
+                </div>
+              </button>
+              <button class="boton-accion" onclick="irVista('reportes')">
+                <div class="accion-icono">📊</div>
+                <div>
+                  <div class="accion-texto-titulo">Ver reportes</div>
+                  <div class="accion-texto-subtitulo">Lo más vendido</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="tarjeta">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">🛍️ Últimas ventas</div></div>
+            <div class="tarjeta-cuerpo" id="ultimas-ventas"></div>
+          </div>
+        </div>
+
+      </div><!-- fin vista inicio -->
+
+      <!-- ══ VISTA: INVENTARIO ══ -->
+      <div class="vista" id="vista-inventario">
+
+        <div class="formulario-agregar">
+          <div class="formulario-agregar-titulo" id="form-inv-titulo">➕ Agregar producto</div>
+          <div class="fila-formulario">
+            <div>
+              <label class="etiqueta-campo">Nombre del producto</label>
+              <input class="campo-entrada" id="inp-nombre" type="text" placeholder="Ej: Calcetines lana">
+            </div>
+            <div>
+              <label class="etiqueta-campo">Precio ($)</label>
+              <input class="campo-entrada" id="inp-precio" type="number" placeholder="Ej: 2500">
+            </div>
+            <div>
+              <label class="etiqueta-campo">Stock (unidades)</label>
+              <input class="campo-entrada" id="inp-stock" type="number" placeholder="Ej: 10">
+            </div>
+          </div>
+          <button class="boton-primario"    onclick="guardarProducto()">💾 Guardar producto</button>
+          <button class="boton-secundario"  id="btn-cancelar-edit" onclick="cancelarEdicion()" style="display:none;">Cancelar</button>
+          <div class="mensaje-error" id="inv-error"></div>
+          <div class="mensaje-exito" id="inv-exito"></div>
+        </div>
+
+        <div class="tarjeta">
+          <div class="tarjeta-encabezado">
+            <div class="tarjeta-titulo">📦 Mis productos</div>
+            <div style="font-size:13px;color:var(--texto-suave);" id="inv-contador">0 productos</div>
+          </div>
+          <div class="tarjeta-cuerpo" style="padding:0 20px;">
+            <table class="tabla-productos">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-productos"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- fin vista inventario -->
+
+      <!-- ══ VISTA: VENTA ══ -->
+      <div class="vista" id="vista-venta">
+        <div class="grilla-2">
+
+          <div class="tarjeta">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">🛍️ ¿Qué vendiste?</div></div>
+            <div class="tarjeta-cuerpo">
+              <div id="selector-productos"></div>
+            </div>
+          </div>
+
+          <div class="tarjeta" id="card-cantidad" style="display:none;">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">📦 ¿Cuántas unidades?</div></div>
+            <div class="tarjeta-cuerpo">
+              <div id="info-prod-sel" style="font-size:16px;font-weight:700;margin-bottom:16px;color:var(--verde);"></div>
+              <div class="fila-cantidad">
+                <button class="boton-cantidad" onclick="cambiarCantidad(-1)">−</button>
+                <div class="numero-cantidad" id="cant-num">1</div>
+                <button class="boton-cantidad" onclick="cambiarCantidad(1)">+</button>
+              </div>
+              <div class="total-venta" id="total-venta"></div>
+              <button class="boton-primario"   style="width:100%;"                        onclick="confirmarVenta()">✅ Confirmar venta</button>
+              <button class="boton-secundario" style="width:100%;margin-left:0;margin-top:10px;" onclick="cancelarSeleccion()">Cancelar</button>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- fin vista venta -->
+
+      <!-- ══ VISTA: REPORTES ══ -->
+      <div class="vista" id="vista-reportes">
+
+        <div class="grilla-3">
+          <div class="tarjeta-estadistica verde" style="grid-column:1/2;">
+            <div class="estadistica-etiqueta">💰 Total vendido</div>
+            <div class="estadistica-valor" id="rep-total">$0</div>
+            <div class="estadistica-pista" id="rep-num-ventas">0 ventas</div>
+          </div>
+          <div class="tarjeta-estadistica">
+            <div class="estadistica-etiqueta">🏆 Más vendido</div>
+            <div id="rep-top" style="font-size:18px;font-weight:800;margin-top:8px;">—</div>
+          </div>
+          <div class="tarjeta-estadistica">
+            <div class="estadistica-etiqueta">⚠️ Stock bajo</div>
+            <div id="rep-stock-bajo" style="font-size:18px;font-weight:800;margin-top:8px;">—</div>
+          </div>
+        </div>
+
+        <div class="grilla-2">
+          <div class="tarjeta">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">📊 Ranking de productos</div></div>
+            <div class="tarjeta-cuerpo" id="rep-barras"></div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">🕐 Todas las ventas</div></div>
+            <div class="tarjeta-cuerpo" id="rep-ventas-lista" style="max-height:360px;overflow-y:auto;"></div>
+          </div>
+        </div>
+
+      </div><!-- fin vista reportes -->
+
+    </div><!-- fin contenido -->
+  </div><!-- fin principal -->
+</div><!-- fin layout -->
+
+<!-- Notificación emergente -->
+<div class="notificacion" id="notificacion"></div>
+
+<!-- Script principal -->
+<script src="minegocio.js"></script>
+
+</body>
+</html>
