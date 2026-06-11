@@ -381,3 +381,128 @@ body {
   vertical-align: middle;
 }
 .tabla-productos tr:hover td { background: var(--fondo); }
+
+/* ══════════════════════════════════════
+   RESPONSIVE — Móviles y tablets
+══════════════════════════════════════ */
+
+/* Tablet (hasta 900px) */
+@media (max-width: 900px) {
+  .grilla-2 { grid-template-columns: 1fr; }
+  .grilla-3 { grid-template-columns: 1fr 1fr; }
+  .barra-lateral { width: 200px; }
+  .principal { margin-left: 200px; }
+}
+
+/* Móvil (hasta 640px) */
+@media (max-width: 640px) {
+  /* Ocultar barra lateral, mostrar nav inferior */
+  .barra-lateral {
+    display: none;
+  }
+  .barra-lateral-pie { display: none; }
+
+  .principal { margin-left: 0; padding-bottom: 70px; }
+
+  .barra-superior { padding: 14px 16px; }
+  .barra-superior-titulo { font-size: 17px; }
+  .barra-superior-fecha { font-size: 12px; padding: 6px 10px; }
+
+  .contenido { padding: 16px; }
+
+  .grilla-2 { grid-template-columns: 1fr; gap: 14px; }
+  .grilla-3 { grid-template-columns: 1fr; gap: 14px; }
+
+  .fila-estadisticas { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .estadistica-valor { font-size: 22px; }
+
+  .fila-formulario { grid-template-columns: 1fr; }
+
+  /* Nav inferior en móvil */
+  .nav-inferior {
+    display: flex !important;
+  }
+}
+
+/* Nav inferior móvil */
+.nav-inferior {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--verde);
+  z-index: 100;
+  padding: 8px 0 10px;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
+}
+.nav-inferior-boton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.65);
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+.nav-inferior-boton.activo { color: white; }
+.nav-inferior-boton span:first-child { font-size: 22px; }
+
+/* ══ SECCIÓN DESCARGA APK ══ */
+.seccion-descarga {
+  background: linear-gradient(135deg, var(--verde) 0%, #0f5c3e 100%);
+  border-radius: var(--radio);
+  padding: 28px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.descarga-texto h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 6px;
+}
+.descarga-texto p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.75);
+  max-width: 320px;
+  line-height: 1.5;
+}
+.boton-descarga-apk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  color: var(--verde);
+  border: none;
+  border-radius: 50px;
+  padding: 14px 28px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.boton-descarga-apk:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+.boton-descarga-apk span { font-size: 22px; }
+
+@media (max-width: 640px) {
+  .seccion-descarga { flex-direction: column; text-align: center; }
+  .descarga-texto p { max-width: 100%; }
+  .boton-descarga-apk { width: 100%; justify-content: center; }
+}
