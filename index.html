@@ -2,214 +2,277 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="MiNegocio">
-  <meta name="theme-color" content="#1a7a55">
-  <meta name="description" content="Gestiona tu negocio desde el celular">
-  <title>MiNegocio</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="./icon-192.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MiNegocio — Gestiona tu negocio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="minegocio.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#16a34a">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 
-  <!-- Banner instalar (se muestra solo en Android/Chrome) -->
-  <div id="banner-instalar" style="display:none;">
-    <div class="banner-instalar">
-      <div class="banner-instalar-texto">
-        📲 Instala MiNegocio
-        <span>Agrégala a tu pantalla de inicio</span>
-      </div>
-      <button class="banner-instalar-boton" id="btn-instalar">Instalar</button>
-      <button class="banner-instalar-cerrar" onclick="cerrarBanner()">✕</button>
+<div class="layout">
+
+  <!-- ══ BARRA LATERAL (desktop) ══ -->
+  <aside class="barra-lateral">
+    <div class="barra-lateral-logo">
+      <div class="barra-lateral-logo-texto">🏪 MiNegocio</div>
+      <div class="barra-lateral-logo-subtitulo">Panel de gestión</div>
     </div>
-  </div>
+    <nav class="barra-lateral-nav">
+      <button class="boton-nav activo" id="nav-inicio"     onclick="irVista('inicio')">
+        <span class="nav-icono">🏠</span> Inicio
+      </button>
+      <button class="boton-nav"        id="nav-inventario" onclick="irVista('inventario')">
+        <span class="nav-icono">📦</span> Inventario
+      </button>
+      <button class="boton-nav"        id="nav-venta"      onclick="irVista('venta')">
+        <span class="nav-icono">➕</span> Registrar venta
+      </button>
+      <button class="boton-nav"        id="nav-reportes"   onclick="irVista('reportes')">
+        <span class="nav-icono">📊</span> Reportes
+      </button>
+    </nav>
+    <div class="barra-lateral-pie">© 2026 MiNegocio<br>Hecho para pequeños negocios</div>
+  </aside>
 
-  <!-- ══ HEADER ══ -->
-  <header class="app-header">
-    <div class="header-logo">🏪 MiNegocio</div>
-    <div class="header-fecha" id="fecha-hoy"></div>
-  </header>
+  <!-- ══ ÁREA PRINCIPAL ══ -->
+  <div class="principal">
 
-  <!-- ══ CONTENIDO ══ -->
-  <main class="app-contenido">
+    <!-- BARRA SUPERIOR -->
+    <div class="barra-superior">
+      <div>
+        <div class="barra-superior-titulo"    id="topbar-titulo">Inicio</div>
+        <div class="barra-superior-subtitulo" id="topbar-subtitulo">Bienvenido a tu negocio</div>
+      </div>
+      <div class="barra-superior-derecha">
+        <div class="barra-superior-fecha" id="fecha-hoy"></div>
+      </div>
+    </div>
 
-    <!-- VISTA: INICIO -->
-    <div class="vista activa" id="vista-inicio">
-      <div class="seccion-titulo">Hola 👋</div>
-      <div class="seccion-subtitulo">Resumen de tu negocio</div>
+    <div class="contenido">
 
-      <div class="fila-estadisticas">
-        <div class="tarjeta-stat destacada">
-          <div>
-            <div class="stat-etiqueta">💰 Ventas hoy</div>
-            <div class="stat-valor" id="stat-total">$0</div>
-            <div class="stat-pista" id="stat-cant">0 ventas</div>
+      <!-- ══ VISTA: INICIO ══ -->
+      <div class="vista activa" id="vista-inicio">
+
+        <!-- BANNER DESCARGA APK -->
+        <div class="seccion-descarga">
+          <div class="descarga-texto">
+            <h3>📱 Lleva MiNegocio en tu bolsillo</h3>
+            <p>Descarga la app para Android y gestiona tu negocio desde cualquier lugar, sin internet.</p>
           </div>
-          <div class="stat-icono">💵</div>
+          <a class="boton-descarga-apk" href="https://github.com/AllanKeith/MiNegocioAPK/releases/download/1.0/MiNegocio-aligned-debugSigned.apk" target="_blank" download>
+            <span>⬇️</span> Descargar APK
+          </a>
         </div>
-        <div class="tarjeta-stat">
-          <div class="stat-etiqueta">📦 Productos</div>
-          <div class="stat-valor" id="stat-prods">0</div>
-          <div class="stat-pista" id="stat-bajo">—</div>
+
+        <div class="fila-estadisticas">
+          <div class="tarjeta-estadistica verde">
+            <div class="estadistica-etiqueta">💰 Ventas hoy</div>
+            <div class="estadistica-valor" id="stat-total">$0</div>
+            <div class="estadistica-pista" id="stat-cant">0 ventas</div>
+          </div>
+          <div class="tarjeta-estadistica">
+            <div class="estadistica-etiqueta">📦 Productos</div>
+            <div class="estadistica-valor" id="stat-prods">0</div>
+            <div class="estadistica-pista" id="stat-bajo">Sin stock bajo</div>
+          </div>
+          <div class="tarjeta-estadistica">
+            <div class="estadistica-etiqueta">📈 Total histórico</div>
+            <div class="estadistica-valor" id="stat-historico">$0</div>
+            <div class="estadistica-pista" id="stat-ventas-total">0 ventas totales</div>
+          </div>
         </div>
-        <div class="tarjeta-stat">
-          <div class="stat-etiqueta">📈 Histórico</div>
-          <div class="stat-valor" id="stat-historico">$0</div>
-          <div class="stat-pista" id="stat-ventas-total">0 totales</div>
+
+        <div class="grilla-2">
+          <div class="tarjeta">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">⚡ Acciones rápidas</div></div>
+            <div class="tarjeta-cuerpo">
+              <button class="boton-accion verde" onclick="irVista('venta')">
+                <div class="accion-icono">➕</div>
+                <div>
+                  <div class="accion-texto-titulo">Registrar venta</div>
+                  <div class="accion-texto-subtitulo">Toca para vender</div>
+                </div>
+              </button>
+              <button class="boton-accion" onclick="irVista('inventario')">
+                <div class="accion-icono">📦</div>
+                <div>
+                  <div class="accion-texto-titulo">Ver inventario</div>
+                  <div class="accion-texto-subtitulo" id="pista-inventario">Cargando...</div>
+                </div>
+              </button>
+              <button class="boton-accion" onclick="irVista('reportes')">
+                <div class="accion-icono">📊</div>
+                <div>
+                  <div class="accion-texto-titulo">Ver reportes</div>
+                  <div class="accion-texto-subtitulo">Lo más vendido</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="tarjeta">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">🛍️ Últimas ventas</div></div>
+            <div class="tarjeta-cuerpo" id="ultimas-ventas"></div>
+          </div>
         </div>
-      </div>
 
-      <div class="tarjeta">
-        <div class="tarjeta-encabezado"><div class="tarjeta-titulo">⚡ Acciones rápidas</div></div>
-        <div class="tarjeta-cuerpo">
-          <button class="boton-accion verde" onclick="irVista('venta')">
-            <div class="accion-icono">➕</div>
-            <div><div class="accion-titulo">Registrar venta</div><div class="accion-subtitulo">Toca para vender ahora</div></div>
-          </button>
-          <button class="boton-accion" onclick="irVista('inventario')">
-            <div class="accion-icono">📦</div>
-            <div><div class="accion-titulo">Ver inventario</div><div class="accion-subtitulo" id="pista-inventario">Cargando...</div></div>
-          </button>
-          <button class="boton-accion" onclick="irVista('reportes')">
-            <div class="accion-icono">📊</div>
-            <div><div class="accion-titulo">Ver reportes</div><div class="accion-subtitulo">Lo más vendido</div></div>
-          </button>
+      </div><!-- fin vista inicio -->
+
+      <!-- ══ VISTA: INVENTARIO ══ -->
+      <div class="vista" id="vista-inventario">
+
+        <div class="formulario-agregar">
+          <div class="formulario-agregar-titulo" id="form-inv-titulo">➕ Agregar producto</div>
+          <div class="fila-formulario">
+            <div>
+              <label class="etiqueta-campo">Nombre del producto</label>
+              <input class="campo-entrada" id="inp-nombre" type="text" placeholder="Ej: Calcetines lana">
+            </div>
+            <div>
+              <label class="etiqueta-campo">Precio ($)</label>
+              <input class="campo-entrada" id="inp-precio" type="number" placeholder="Ej: 2500">
+            </div>
+            <div>
+              <label class="etiqueta-campo">Stock (unidades)</label>
+              <input class="campo-entrada" id="inp-stock" type="number" placeholder="Ej: 10">
+            </div>
+          </div>
+          <button class="boton-primario"    onclick="guardarProducto()">💾 Guardar producto</button>
+          <button class="boton-secundario"  id="btn-cancelar-edit" onclick="cancelarEdicion()" style="display:none;">Cancelar</button>
+          <div class="mensaje-error" id="inv-error"></div>
+          <div class="mensaje-exito" id="inv-exito"></div>
         </div>
-      </div>
 
-      <div class="tarjeta">
-        <div class="tarjeta-encabezado"><div class="tarjeta-titulo">🛍️ Últimas ventas</div></div>
-        <div class="tarjeta-cuerpo" id="ultimas-ventas"></div>
-      </div>
-    </div>
-
-    <!-- VISTA: INVENTARIO -->
-    <div class="vista" id="vista-inventario">
-      <div class="seccion-titulo">📦 Inventario</div>
-      <div class="seccion-subtitulo" id="inv-contador">0 productos</div>
-
-      <div class="formulario-agregar">
-        <div class="formulario-titulo" id="form-inv-titulo">➕ Agregar producto</div>
-        <div class="campo-grupo">
-          <label class="campo-etiqueta">Nombre del producto</label>
-          <input class="campo-entrada" id="inp-nombre" type="text" placeholder="Ej: Calcetines lana" autocomplete="off">
+        <div class="tarjeta">
+          <div class="tarjeta-encabezado">
+            <div class="tarjeta-titulo">📦 Mis productos</div>
+            <div style="font-size:13px;color:var(--texto-suave);" id="inv-contador">0 productos</div>
+          </div>
+          <div class="tarjeta-cuerpo" style="padding:0 20px;">
+            <table class="tabla-productos">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-productos"></tbody>
+            </table>
+          </div>
         </div>
-        <div class="campo-grupo">
-          <label class="campo-etiqueta">Precio ($)</label>
-          <input class="campo-entrada" id="inp-precio" type="number" inputmode="numeric" placeholder="Ej: 2500">
+
+      </div><!-- fin vista inventario -->
+
+      <!-- ══ VISTA: VENTA ══ -->
+      <div class="vista" id="vista-venta">
+        <div class="grilla-2">
+
+          <div class="tarjeta">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">🛍️ ¿Qué vendiste?</div></div>
+            <div class="tarjeta-cuerpo">
+              <div id="selector-productos"></div>
+            </div>
+          </div>
+
+          <div class="tarjeta" id="card-cantidad" style="display:none;">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">📦 ¿Cuántas unidades?</div></div>
+            <div class="tarjeta-cuerpo">
+              <div id="info-prod-sel" style="font-size:16px;font-weight:700;margin-bottom:16px;color:var(--verde);"></div>
+              <div class="fila-cantidad">
+                <button class="boton-cantidad" onclick="cambiarCantidad(-1)">−</button>
+                <div class="numero-cantidad" id="cant-num">1</div>
+                <button class="boton-cantidad" onclick="cambiarCantidad(1)">+</button>
+              </div>
+              <div class="total-venta" id="total-venta"></div>
+              <button class="boton-primario"   style="width:100%;"                        onclick="confirmarVenta()">✅ Confirmar venta</button>
+              <button class="boton-secundario" style="width:100%;margin-left:0;margin-top:10px;" onclick="cancelarSeleccion()">Cancelar</button>
+            </div>
+          </div>
+
         </div>
-        <div class="campo-grupo">
-          <label class="campo-etiqueta">Stock (unidades)</label>
-          <input class="campo-entrada" id="inp-stock" type="number" inputmode="numeric" placeholder="Ej: 10">
+      </div><!-- fin vista venta -->
+
+      <!-- ══ VISTA: REPORTES ══ -->
+      <div class="vista" id="vista-reportes">
+
+        <div class="grilla-3">
+          <div class="tarjeta-estadistica verde" style="grid-column:1/2;">
+            <div class="estadistica-etiqueta">💰 Total vendido</div>
+            <div class="estadistica-valor" id="rep-total">$0</div>
+            <div class="estadistica-pista" id="rep-num-ventas">0 ventas</div>
+          </div>
+          <div class="tarjeta-estadistica">
+            <div class="estadistica-etiqueta">🏆 Más vendido</div>
+            <div id="rep-top" style="font-size:18px;font-weight:800;margin-top:8px;">—</div>
+          </div>
+          <div class="tarjeta-estadistica">
+            <div class="estadistica-etiqueta">⚠️ Stock bajo</div>
+            <div id="rep-stock-bajo" style="font-size:18px;font-weight:800;margin-top:8px;">—</div>
+          </div>
         </div>
-        <div class="fila-botones">
-          <button class="boton-primario" onclick="guardarProducto()">💾 Guardar</button>
-          <button class="boton-secundario" id="btn-cancelar-edit" onclick="cancelarEdicion()" style="display:none;">Cancelar</button>
+
+        <div class="grilla-2">
+          <div class="tarjeta">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">📊 Ranking de productos</div></div>
+            <div class="tarjeta-cuerpo" id="rep-barras"></div>
+          </div>
+          <div class="tarjeta">
+            <div class="tarjeta-encabezado"><div class="tarjeta-titulo">🕐 Todas las ventas</div></div>
+            <div class="tarjeta-cuerpo" id="rep-ventas-lista" style="max-height:360px;overflow-y:auto;"></div>
+          </div>
         </div>
-        <div class="mensaje-error" id="inv-error"></div>
-        <div class="mensaje-exito" id="inv-exito"></div>
-      </div>
 
-      <div id="lista-productos"></div>
-    </div>
+      </div><!-- fin vista reportes -->
 
-    <!-- VISTA: VENTA -->
-    <div class="vista" id="vista-venta">
-      <div class="seccion-titulo">🛍️ Registrar venta</div>
-      <div class="seccion-subtitulo">¿Qué vendiste?</div>
+    </div><!-- fin contenido -->
+  </div><!-- fin principal -->
+</div><!-- fin layout -->
 
-      <div id="selector-productos"></div>
+<!-- ══ NAV INFERIOR MÓVIL ══ -->
+<nav class="nav-inferior" id="nav-inferior">
+  <button class="nav-inferior-boton activo" id="navmob-inicio" onclick="irVista('inicio')">
+    <span>🏠</span><span>Inicio</span>
+  </button>
+  <button class="nav-inferior-boton" id="navmob-inventario" onclick="irVista('inventario')">
+    <span>📦</span><span>Inventario</span>
+  </button>
+  <button class="nav-inferior-boton" id="navmob-venta" onclick="irVista('venta')">
+    <span>➕</span><span>Vender</span>
+  </button>
+  <button class="nav-inferior-boton" id="navmob-reportes" onclick="irVista('reportes')">
+    <span>📊</span><span>Reportes</span>
+  </button>
+</nav>
 
-      <div class="panel-cantidad" id="panel-cantidad" style="display:none;">
-        <div class="panel-cantidad-titulo" id="info-prod-sel"></div>
-        <div class="fila-cantidad">
-          <button class="boton-cantidad" onclick="cambiarCantidad(-1)">−</button>
-          <div class="numero-cantidad" id="cant-num">1</div>
-          <button class="boton-cantidad" onclick="cambiarCantidad(1)">+</button>
-        </div>
-        <div class="total-venta" id="total-venta"></div>
-        <button class="boton-primario boton-ancho" onclick="confirmarVenta()">✅ Confirmar venta</button>
-        <button class="boton-secundario boton-ancho" onclick="cancelarSeleccion()">Cancelar</button>
-      </div>
-    </div>
+<!-- Notificación emergente -->
+<div class="notificacion" id="notificacion"></div>
 
-    <!-- VISTA: REPORTES -->
-    <div class="vista" id="vista-reportes">
-      <div class="seccion-titulo">📊 Reportes</div>
-      <div class="seccion-subtitulo">Estadísticas de tu negocio</div>
+<!-- Script principal -->
+<script src="minegocio.js"></script>
 
-      <div class="fila-estadisticas tres">
-        <div class="tarjeta-stat" style="grid-column:1/-1;background:var(--verde);">
-          <div class="stat-etiqueta" style="color:rgba(255,255,255,0.7);">💰 Total vendido</div>
-          <div class="stat-valor" id="rep-total" style="color:white;font-size:32px;">$0</div>
-          <div class="stat-pista" id="rep-num-ventas" style="color:rgba(255,255,255,0.85);">0 ventas</div>
-        </div>
-        <div class="tarjeta-stat">
-          <div class="stat-etiqueta">🏆 Más vendido</div>
-          <div id="rep-top" style="font-size:15px;font-weight:800;margin-top:6px;">—</div>
-        </div>
-        <div class="tarjeta-stat">
-          <div class="stat-etiqueta">⚠️ Stock bajo</div>
-          <div id="rep-stock-bajo" style="font-size:15px;font-weight:800;margin-top:6px;">—</div>
-        </div>
-      </div>
-
-      <div class="tarjeta">
-        <div class="tarjeta-encabezado"><div class="tarjeta-titulo">📊 Ranking de ventas</div></div>
-        <div class="tarjeta-cuerpo" id="rep-barras"></div>
-      </div>
-
-      <div class="tarjeta">
-        <div class="tarjeta-encabezado"><div class="tarjeta-titulo">🕐 Historial de ventas</div></div>
-        <div class="tarjeta-cuerpo lista-scroll" id="rep-ventas-lista"></div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- ══ NAV INFERIOR ══ -->
-  <nav class="nav-inferior">
-    <button class="nav-tab activo" id="nav-inicio" onclick="irVista('inicio')">
-      <div class="nav-tab-icono">🏠</div>
-      <div>Inicio</div>
-      <div class="nav-tab-punto"></div>
-    </button>
-    <button class="nav-tab" id="nav-inventario" onclick="irVista('inventario')">
-      <div class="nav-tab-icono">📦</div>
-      <div>Inventario</div>
-      <div class="nav-tab-punto"></div>
-    </button>
-    <button class="nav-tab" id="nav-venta" onclick="irVista('venta')">
-      <div class="nav-tab-icono">➕</div>
-      <div>Vender</div>
-      <div class="nav-tab-punto"></div>
-    </button>
-    <button class="nav-tab" id="nav-reportes" onclick="irVista('reportes')">
-      <div class="nav-tab-icono">📊</div>
-      <div>Reportes</div>
-      <div class="nav-tab-punto"></div>
-    </button>
-  </nav>
-
-  <!-- Notificación emergente -->
-  <div class="notificacion" id="notificacion"></div>
-
-  <script src="minegocio.js"></script>
-
+<!-- Parche para nav inferior móvil -->
 <script>
-// Ocultar banner de descarga si ya esta instalada como app
-if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-  document.addEventListener('DOMContentLoaded', function() {
-    var banner = document.querySelector('.seccion-descarga');
-    if (banner) banner.style.display = 'none';
-  });
-}
+  const _irVistaOriginal = irVista;
+  const vistasBotonesMob = {
+    inicio: 'navmob-inicio',
+    inventario: 'navmob-inventario',
+    venta: 'navmob-venta',
+    reportes: 'navmob-reportes'
+  };
+  window.irVista = function(nombre) {
+    _irVistaOriginal(nombre);
+    document.querySelectorAll('.nav-inferior-boton').forEach(b => b.classList.remove('activo'));
+    const btn = document.getElementById(vistasBotonesMob[nombre]);
+    if (btn) btn.classList.add('activo');
+  };
 </script>
 </body>
 </html>

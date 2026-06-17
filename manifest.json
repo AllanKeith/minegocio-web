@@ -1,75 +1,15 @@
 {
-  "name": "MiNegocio",
+  "name": "MiNegocio — Gestiona tu negocio",
   "short_name": "MiNegocio",
-  "description": "Gestiona tu negocio desde el celular",
+  "description": "Panel de gestión de inventario y ventas para pequeños negocios",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#1a7a55",
-  "theme_color": "#1a7a55",
-  "orientation": "portrait",
-  "lang": "es",
-  "dir": "ltr",
-  "categories": [
-    "negocios",
-    "finanzas",
-    "productividad"
-  ],
-  "iarc_rating_id": "",
-  "prefer_related_applications": false,
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "orientation": "portrait-primary",
   "icons": [
-    {
-      "src": "./icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "label": "Pantalla principal de MiNegocio",
-      "form_factor": "narrow"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Nueva Venta",
-      "short_name": "Venta",
-      "description": "Registrar una nueva venta",
-      "url": "./minegocio.html#ventas",
-      "icons": [
-        {
-          "src": "./icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Ver Inventario",
-      "short_name": "Inventario",
-      "description": "Revisar el inventario de productos",
-      "url": "./minegocio.html#inventario",
-      "icons": [
-        {
-          "src": "./icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    }
-  ],
-  "launch_handler": {
-    "client_mode": "navigate-existing"
-  },
-  "edge_side_panel": {
-    "preferred_width": 400
-  }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
 }

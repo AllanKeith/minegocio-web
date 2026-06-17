@@ -1,46 +1,7 @@
 // ══════════════════════════════════════════════
-// MINEGOCIO — Lógica principal (PWA Móvil)
+// MINEGOCIO — Lógica principal
+// Archivo: minegocio.js
 // ══════════════════════════════════════════════
-
-
-// ══════════════════════════════
-// REGISTRO DEL SERVICE WORKER
-// ══════════════════════════════
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js')
-      .then(function () { console.log('Service Worker registrado ✅'); })
-      .catch(function (err) { console.log('Error SW:', err); });
-  });
-}
-
-
-// ══════════════════════════════
-// BANNER DE INSTALACIÓN (Android/Chrome)
-// ══════════════════════════════
-var eventoInstalacion = null;
-
-window.addEventListener('beforeinstallprompt', function (evento) {
-  evento.preventDefault();
-  eventoInstalacion = evento;
-  document.getElementById('banner-instalar').style.display = 'block';
-});
-
-document.getElementById('btn-instalar').addEventListener('click', function () {
-  if (!eventoInstalacion) return;
-  eventoInstalacion.prompt();
-  eventoInstalacion.userChoice.then(function (resultado) {
-    if (resultado.outcome === 'accepted') {
-      cerrarBanner();
-      mostrarNotificacion('🎉 ¡App instalada correctamente!');
-    }
-    eventoInstalacion = null;
-  });
-});
-
-function cerrarBanner() {
-  document.getElementById('banner-instalar').style.display = 'none';
-}
 
 
 // ══════════════════════════════
@@ -50,6 +11,7 @@ function obtenerDatos(clave, porDefecto) {
   try { return JSON.parse(localStorage.getItem(clave)) || porDefecto; }
   catch (e) { return porDefecto; }
 }
+
 function guardarDatos(clave, valor) {
   localStorage.setItem(clave, JSON.stringify(valor));
 }
@@ -62,6 +24,7 @@ var productos  = obtenerDatos('mn_productos', []);
 var ventas     = obtenerDatos('mn_ventas', []);
 var editandoId = null;
 
+// Productos de ejemplo si no hay ninguno guardado
 if (productos.length === 0) {
   productos = [
     { id: 1, nombre: 'Calcetines lana',  precio: 2500, stock: 15 },
@@ -74,26 +37,25 @@ if (productos.length === 0) {
 
 
 // ══════════════════════════════
-// FECHA EN HEADER
+// NAVEGACIÓN ENTRE VISTAS
 // ══════════════════════════════
-(function () {
-  var d     = new Date();
-  var dias  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  document.getElementById('fecha-hoy').textContent =
-    dias[d.getDay()] + ' ' + d.getDate() + ' ' + meses[d.getMonth()];
-})();
+var titulosVistas = {
+  inicio:     ['Inicio',           'Resumen de tu negocio'],
+  inventario: ['Inventario',       'Administra tus productos'],
+  venta:      ['Registrar venta',  'Selecciona el producto vendido'],
+  reportes:   ['Reportes',         'Lo más vendido y estadísticas']
+};
 
-
-// ══════════════════════════════
-// NAVEGACIÓN
-// ══════════════════════════════
 function irVista(id) {
   document.querySelectorAll('.vista').forEach(function (v) { v.classList.remove('activa'); });
-  document.querySelectorAll('.nav-tab').forEach(function (n) { n.classList.remove('activo'); });
+  document.querySelectorAll('.boton-nav').forEach(function (n) { n.classList.remove('activo'); });
+
   document.getElementById('vista-' + id).classList.add('activa');
   document.getElementById('nav-' + id).classList.add('activo');
+  document.getElementById('topbar-titulo').textContent   = titulosVistas[id][0];
+  document.getElementById('topbar-subtitulo').textContent = titulosVistas[id][1];
   window.scrollTo(0, 0);
+
   if (id === 'inicio')     mostrarInicio();
   if (id === 'inventario') mostrarInventario();
   if (id === 'venta')      mostrarVenta();
@@ -102,12 +64,23 @@ function irVista(id) {
 
 
 // ══════════════════════════════
+// FECHA EN BARRA SUPERIOR
+// ══════════════════════════════
+(function () {
+  var d = new Date();
+  var dias   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  var meses  = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('fecha-hoy').textContent =
+    dias[d.getDay()] + ', ' + d.getDate() + ' de ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+})();
+
+
+// ══════════════════════════════
 // UTILIDAD: FORMATEAR FECHA
 // ══════════════════════════════
 function formatearFecha(marcaTiempo) {
   var d = new Date(marcaTiempo);
-  return d.toLocaleDateString('es-CL') + ' ' +
-         d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleDateString('es-CL') + ' ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
 }
 
 
@@ -115,34 +88,34 @@ function formatearFecha(marcaTiempo) {
 // VISTA: INICIO
 // ══════════════════════════════
 function mostrarInicio() {
-  var hoy       = new Date().toDateString();
-  var ventasHoy = ventas.filter(function (v) { return new Date(v.fecha).toDateString() === hoy; });
-  var totalHoy  = ventasHoy.reduce(function (a, v) { return a + v.total; }, 0);
-  var totalHist = ventas.reduce(function (a, v) { return a + v.total; }, 0);
-  var cantBajos = productos.filter(function (p) { return p.stock <= 3; }).length;
+  var hoy        = new Date().toDateString();
+  var ventasHoy  = ventas.filter(function (v) { return new Date(v.fecha).toDateString() === hoy; });
+  var totalHoy   = ventasHoy.reduce(function (acc, v) { return acc + v.total; }, 0);
+  var totalHist  = ventas.reduce(function (acc, v) { return acc + v.total; }, 0);
+  var cantBajos  = productos.filter(function (p) { return p.stock <= 3; }).length;
 
-  document.getElementById('stat-total').textContent        = '$' + totalHoy.toLocaleString('es-CL');
-  document.getElementById('stat-cant').textContent         = ventasHoy.length + (ventasHoy.length === 1 ? ' venta' : ' ventas');
-  document.getElementById('stat-prods').textContent        = productos.length;
-  document.getElementById('stat-bajo').textContent         = cantBajos > 0 ? cantBajos + ' con poco stock ⚠️' : '✅ Todo OK';
-  document.getElementById('stat-historico').textContent    = '$' + totalHist.toLocaleString('es-CL');
-  document.getElementById('stat-ventas-total').textContent = ventas.length + ' totales';
-  document.getElementById('pista-inventario').textContent  = productos.length + ' productos';
+  document.getElementById('stat-total').textContent         = '$' + totalHoy.toLocaleString('es-CL');
+  document.getElementById('stat-cant').textContent          = ventasHoy.length + (ventasHoy.length === 1 ? ' venta' : ' ventas');
+  document.getElementById('stat-prods').textContent         = productos.length;
+  document.getElementById('stat-bajo').textContent          = cantBajos > 0 ? cantBajos + ' con stock bajo ⚠️' : '✅ Todo en orden';
+  document.getElementById('stat-historico').textContent     = '$' + totalHist.toLocaleString('es-CL');
+  document.getElementById('stat-ventas-total').textContent  = ventas.length + ' ventas totales';
+  document.getElementById('pista-inventario').textContent   = productos.length + ' productos';
 
-  var cont      = document.getElementById('ultimas-ventas');
-  var recientes = ventas.slice().reverse().slice(0, 5);
+  var contenedor = document.getElementById('ultimas-ventas');
+  var recientes  = ventas.slice().reverse().slice(0, 5);
 
   if (recientes.length === 0) {
-    cont.innerHTML =
+    contenedor.innerHTML =
       '<div class="estado-vacio">' +
         '<div class="estado-vacio-icono">🛍️</div>' +
         '<div class="estado-vacio-texto">Sin ventas aún</div>' +
         '<div class="estado-vacio-detalle">Toca "Registrar venta" para comenzar</div>' +
       '</div>';
   } else {
-    cont.innerHTML = recientes.map(function (v) {
+    contenedor.innerHTML = recientes.map(function (v) {
       return '<div class="item-lista">' +
-               '<div><div class="item-nombre">' + v.nombre + ' ×' + v.cantidad + '</div>' +
+               '<div><div class="item-nombre">' + v.nombre + ' x' + v.cantidad + '</div>' +
                '<div class="item-subtitulo">' + formatearFecha(v.fecha) + '</div></div>' +
                '<div class="item-precio">$' + v.total.toLocaleString('es-CL') + '</div>' +
              '</div>';
@@ -158,35 +131,31 @@ function mostrarInventario() {
   document.getElementById('inv-contador').textContent =
     productos.length + ' producto' + (productos.length !== 1 ? 's' : '');
 
-  var contenedor = document.getElementById('lista-productos');
+  var cuerpoTabla = document.getElementById('tabla-productos');
 
   if (productos.length === 0) {
-    contenedor.innerHTML =
-      '<div class="estado-vacio">' +
+    cuerpoTabla.innerHTML =
+      '<tr><td colspan="5"><div class="estado-vacio">' +
         '<div class="estado-vacio-icono">📦</div>' +
         '<div class="estado-vacio-texto">Sin productos</div>' +
         '<div class="estado-vacio-detalle">Agrega tu primer producto arriba</div>' +
-      '</div>';
+      '</div></td></tr>';
     return;
   }
 
-  contenedor.innerHTML = productos.map(function (p) {
-    var claseEtiq  = p.stock === 0 ? 'etiqueta-sin'  : p.stock <= 3 ? 'etiqueta-bajo'  : 'etiqueta-ok';
-    var textoEtiq  = p.stock === 0 ? 'Sin stock'     : p.stock <= 3 ? '⚠️ Poco stock'  : '✅ OK';
-    return '<div class="producto-card">' +
-             '<div class="producto-card-fila">' +
-               '<div class="producto-nombre">' + p.nombre + '</div>' +
-               '<span class="item-etiqueta ' + claseEtiq + '">' + textoEtiq + '</span>' +
-             '</div>' +
-             '<div class="producto-detalle">' +
-               '<span>💰 <strong>$' + p.precio.toLocaleString('es-CL') + '</strong></span>' +
-               '<span>📦 <strong>' + p.stock + ' ud.</strong></span>' +
-             '</div>' +
-             '<div class="item-acciones">' +
-               '<button class="boton-pequeño editar"   onclick="editarProducto(' + p.id + ')">✏️ Editar</button>' +
-               '<button class="boton-pequeño eliminar" onclick="eliminarProducto(' + p.id + ')">🗑️ Eliminar</button>' +
-             '</div>' +
-           '</div>';
+  cuerpoTabla.innerHTML = productos.map(function (p) {
+    var claseEtiqueta  = p.stock === 0 ? 'etiqueta-sin'  : p.stock <= 3 ? 'etiqueta-bajo'  : 'etiqueta-ok';
+    var textoEtiqueta  = p.stock === 0 ? 'Sin stock'      : p.stock <= 3 ? '⚠️ Poco stock'  : '✅ OK';
+    return '<tr>' +
+      '<td><strong>' + p.nombre + '</strong></td>' +
+      '<td>$' + p.precio.toLocaleString('es-CL') + '</td>' +
+      '<td>' + p.stock + ' ud.</td>' +
+      '<td><span class="item-etiqueta ' + claseEtiqueta + '">' + textoEtiqueta + '</span></td>' +
+      '<td><div class="item-acciones">' +
+        '<button class="boton-pequeño editar"   onclick="editarProducto(' + p.id + ')">✏️ Editar</button>' +
+        '<button class="boton-pequeño eliminar" onclick="eliminarProducto(' + p.id + ')">🗑️ Eliminar</button>' +
+      '</div></td>' +
+    '</tr>';
   }).join('');
 }
 
@@ -199,9 +168,9 @@ function guardarProducto() {
   error.style.display = 'none';
   exito.style.display = 'none';
 
-  if (!nombre)                   { error.textContent = '⚠️ Escribe el nombre del producto.'; error.style.display = 'block'; return; }
-  if (!precio || precio <= 0)    { error.textContent = '⚠️ Escribe un precio válido.';        error.style.display = 'block'; return; }
-  if (isNaN(stock) || stock < 0) { error.textContent = '⚠️ Escribe el stock (puede ser 0).'; error.style.display = 'block'; return; }
+  if (!nombre)                { error.textContent = 'Escribe el nombre del producto.'; error.style.display = 'block'; return; }
+  if (!precio || precio <= 0) { error.textContent = 'Escribe un precio válido.';       error.style.display = 'block'; return; }
+  if (isNaN(stock) || stock < 0) { error.textContent = 'Escribe el stock (puede ser 0).'; error.style.display = 'block'; return; }
 
   if (editandoId) {
     productos = productos.map(function (p) {
@@ -262,47 +231,46 @@ function mostrarVenta() {
   productoSeleccionado = null;
   cantidadVenta        = 1;
   document.getElementById('cant-num').textContent = '1';
-  document.getElementById('panel-cantidad').style.display = 'none';
+  document.getElementById('card-cantidad').style.display = 'none';
 
-  var cont       = document.getElementById('selector-productos');
-  var disponibles = productos.filter(function (p) { return p.stock > 0; });
+  var contenedor   = document.getElementById('selector-productos');
+  var disponibles  = productos.filter(function (p) { return p.stock > 0; });
 
   if (disponibles.length === 0) {
-    cont.innerHTML =
+    contenedor.innerHTML =
       '<div class="estado-vacio">' +
         '<div class="estado-vacio-icono">📦</div>' +
         '<div class="estado-vacio-texto">Sin productos con stock</div>' +
-        '<div class="estado-vacio-detalle">Ve a Inventario y agrega productos primero</div>' +
+        '<div class="estado-vacio-detalle">Ve a "Inventario" y agrega productos primero</div>' +
       '</div>';
     return;
   }
 
-  cont.innerHTML = disponibles.map(function (p) {
-    return '<button class="selector-producto" id="sel-' + p.id + '" onclick="seleccionarProducto(' + p.id + ')">' +
+  contenedor.innerHTML = disponibles.map(function (p) {
+    return '<div class="selector-producto" id="sel-' + p.id + '" onclick="seleccionarProducto(' + p.id + ')">' +
              '<div>' +
                '<div style="font-size:15px;font-weight:700;">' + p.nombre + '</div>' +
-               '<div style="font-size:12px;color:var(--texto-suave);margin-top:3px;">Stock: ' + p.stock + ' | $' + p.precio.toLocaleString('es-CL') + ' c/u</div>' +
+               '<div style="font-size:12px;color:var(--texto-suave);">Stock: ' + p.stock + ' | $' + p.precio.toLocaleString('es-CL') + ' c/u</div>' +
              '</div>' +
-             '<div style="font-size:22px;color:var(--verde);">›</div>' +
-           '</button>';
+             '<div style="font-size:20px;color:var(--verde);">›</div>' +
+           '</div>';
   }).join('');
 }
 
 function seleccionarProducto(id) {
   productoSeleccionado = productos.find(function (p) { return p.id === id; });
-  cantidadVenta        = 1;
+  cantidadVenta = 1;
   document.querySelectorAll('.selector-producto').forEach(function (el) { el.classList.remove('seleccionado'); });
-  var elemSel = document.getElementById('sel-' + id);
-  if (elemSel) elemSel.classList.add('seleccionado');
-  document.getElementById('panel-cantidad').style.display = 'block';
+  var elementoSel = document.getElementById('sel-' + id);
+  if (elementoSel) elementoSel.classList.add('seleccionado');
+  document.getElementById('card-cantidad').style.display = 'block';
   document.getElementById('info-prod-sel').textContent = '🛍️ ' + productoSeleccionado.nombre;
   document.getElementById('cant-num').textContent = '1';
   actualizarTotalVenta();
-  document.getElementById('panel-cantidad').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function cambiarCantidad(delta) {
-  var maximo    = productoSeleccionado ? productoSeleccionado.stock : 99;
+  var maximo = productoSeleccionado ? productoSeleccionado.stock : 99;
   cantidadVenta = Math.max(1, Math.min(maximo, cantidadVenta + delta));
   document.getElementById('cant-num').textContent = cantidadVenta;
   actualizarTotalVenta();
@@ -327,19 +295,21 @@ function confirmarVenta() {
   };
   ventas.push(nuevaVenta);
   guardarDatos('mn_ventas', ventas);
+
   productos = productos.map(function (p) {
     return p.id === productoSeleccionado.id
       ? { id: p.id, nombre: p.nombre, precio: p.precio, stock: p.stock - cantidadVenta }
       : p;
   });
   guardarDatos('mn_productos', productos);
+
   mostrarNotificacion('✅ Venta registrada — $' + nuevaVenta.total.toLocaleString('es-CL'));
   irVista('inicio');
 }
 
 function cancelarSeleccion() {
   productoSeleccionado = null;
-  document.getElementById('panel-cantidad').style.display = 'none';
+  document.getElementById('card-cantidad').style.display = 'none';
   document.querySelectorAll('.selector-producto').forEach(function (el) { el.classList.remove('seleccionado'); });
 }
 
@@ -348,10 +318,11 @@ function cancelarSeleccion() {
 // VISTA: REPORTES
 // ══════════════════════════════
 function mostrarReportes() {
-  var totalVendido = ventas.reduce(function (a, v) { return a + v.total; }, 0);
+  var totalVendido = ventas.reduce(function (acc, v) { return acc + v.total; }, 0);
   document.getElementById('rep-total').textContent      = '$' + totalVendido.toLocaleString('es-CL');
   document.getElementById('rep-num-ventas').textContent = ventas.length + ' ventas';
 
+  // Conteo por producto
   var conteo = {};
   ventas.forEach(function (v) {
     if (!conteo[v.nombre]) conteo[v.nombre] = { cantidad: 0, total: 0 };
@@ -366,6 +337,7 @@ function mostrarReportes() {
   document.getElementById('rep-stock-bajo').textContent =
     bajos.length > 0 ? bajos.length + ' producto' + (bajos.length > 1 ? 's' : '') : 'Sin alertas ✅';
 
+  // Barras de ranking
   var contenedorBarras = document.getElementById('rep-barras');
   var maxCantidad      = ranking.length > 0 ? ranking[0][1].cantidad : 1;
 
@@ -389,6 +361,7 @@ function mostrarReportes() {
              '</div>';
     }).join('');
 
+    // Recomendaciones de stock
     var sinStock  = productos.filter(function (p) { return p.stock === 0; });
     var pocoStock = productos.filter(function (p) { return p.stock > 0 && p.stock <= 3; });
     var mensajeRec = '';
@@ -403,13 +376,14 @@ function mostrarReportes() {
     }
   }
 
+  // Lista de todas las ventas
   var listaVentas = document.getElementById('rep-ventas-lista');
   if (ventas.length === 0) {
     listaVentas.innerHTML = '<div class="estado-vacio"><div class="estado-vacio-detalle">Sin ventas registradas</div></div>';
   } else {
     listaVentas.innerHTML = ventas.slice().reverse().map(function (v) {
       return '<div class="item-lista">' +
-               '<div><div class="item-nombre">' + v.nombre + ' ×' + v.cantidad + '</div>' +
+               '<div><div class="item-nombre">' + v.nombre + ' x' + v.cantidad + '</div>' +
                '<div class="item-subtitulo">' + formatearFecha(v.fecha) + '</div></div>' +
                '<div class="item-precio">$' + v.total.toLocaleString('es-CL') + '</div>' +
              '</div>';
@@ -430,6 +404,6 @@ function mostrarNotificacion(mensaje) {
 
 
 // ══════════════════════════════
-// INICIO
+// INICIO DE LA APLICACIÓN
 // ══════════════════════════════
 mostrarInicio();
