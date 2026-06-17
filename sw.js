@@ -1,28 +1,34 @@
-// ══════════════════════════════════════
-// MINEGOCIO — Service Worker v2
-// Funciona 100% sin internet
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
+// MINEGOCIO — Service Worker
+// Guarda los archivos de la app en el dispositivo para
+// que funcione aunque no haya conexión a internet.
+// ══════════════════════════════════════════════
 
-var CACHE_NOMBRE = 'minegocio-v2';
+// Sube este número cada vez que subas una nueva versión de la app
+// para que los teléfonos descarguen los archivos actualizados.
+var CACHE_NAME = 'minegocio-cache-v1';
 
-var ARCHIVOS_CACHE = [
-  './minegocio.html',
+var ARCHIVOS_APP = [
+  './',
   './index.html',
   './minegocio.css',
   './minegocio.js',
+  './jspdf.umd.min.js',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
 ];
 
-// Instalación: guarda todos los archivos en caché
-self.addEventListener('install', function(evento) {
+// Guardar todos los archivos de la app al instalar el service worker.
+// Se guarda cada archivo por separado (en vez de todo o nada) para que,
+// si uno falla, el resto de la app siga funcionando sin internet.
+self.addEventListener('install', function (evento) {
   evento.waitUntil(
-    caches.open(CACHE_NOMBRE).then(function(cache) {
-      return Promise.allSettled(
-        ARCHIVOS_CACHE.map(function(url) {
-          return cache.add(url).catch(function(err) {
-            console.log('No se pudo cachear: ' + url, err);
+    caches.open(CACHE_NAME).then(function (cache) {
+      return Promise.all(
+        ARCHIVOS_APP.map(function (url) {
+          return cache.add(url).catch(function (err) {
+            console.warn('No se pudo guardar en caché:', url, err);
           });
         })
       );
@@ -31,39 +37,47 @@ self.addEventListener('install', function(evento) {
   self.skipWaiting();
 });
 
-// Activación: limpia cachés viejas
-self.addEventListener('activate', function(evento) {
+// Borrar cachés de versiones anteriores cuando se activa una nueva versión
+self.addEventListener('activate', function (evento) {
   evento.waitUntil(
-    caches.keys().then(function(claves) {
+    caches.keys().then(function (nombres) {
       return Promise.all(
-        claves.filter(function(clave) { return clave !== CACHE_NOMBRE; })
-              .map(function(clave) { return caches.delete(clave); })
+        nombres
+          .filter(function (nombre) { return nombre !== CACHE_NAME; })
+          .map(function (nombre) { return caches.delete(nombre); })
       );
     })
   );
   self.clients.claim();
 });
 
-// Fetch: sirve desde caché primero, si no hay va a la red
-self.addEventListener('fetch', function(evento) {
+// Responder primero desde la copia guardada en el dispositivo (rápido y
+// funciona sin internet); si no está guardada, intentar buscarla en la red
+// y guardar una copia para la próxima vez.
+self.addEventListener('fetch', function (evento) {
+  if (evento.request.method !== 'GET') return;
+
   evento.respondWith(
-    caches.match(evento.request).then(function(respuesta) {
-      if (respuesta) {
-        return respuesta;
-      }
-      return fetch(evento.request).then(function(respuestaRed) {
-        // Guarda en caché cualquier recurso nuevo que se descargue
-        if (respuestaRed && respuestaRed.status === 200) {
-          var respuestaClon = respuestaRed.clone();
-          caches.open(CACHE_NOMBRE).then(function(cache) {
-            cache.put(evento.request, respuestaClon);
-          });
-        }
-        return respuestaRed;
-      }).catch(function() {
-        // Sin internet y sin caché: devuelve la página principal
-        return caches.match('./minegocio.html');
-      });
+    caches.match(evento.request).then(function (respuestaGuardada) {
+      if (respuestaGuardada) return respuestaGuardada;
+
+      return fetch(evento.request)
+        .then(function (respuestaRed) {
+          if (respuestaRed && respuestaRed.status === 200) {
+            var copia = respuestaRed.clone();
+            caches.open(CACHE_NAME).then(function (cache) {
+              cache.put(evento.request, copia);
+            });
+          }
+          return respuestaRed;
+        })
+        .catch(function () {
+          // Sin internet y sin copia guardada: si es la pantalla principal,
+          // mostrar igual el index.html guardado en vez de un error.
+          if (evento.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
+        });
     })
   );
 });

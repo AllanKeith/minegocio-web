@@ -22,7 +22,7 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Nunito', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background: var(--fondo);
   color: var(--texto);
   min-height: 100vh;
@@ -66,7 +66,7 @@ body {
   border-radius: var(--radio-pequeño);
   background: transparent;
   color: rgba(255,255,255,0.75);
-  font-family: 'Nunito', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
@@ -111,6 +111,26 @@ body {
   border-radius: 20px;
   font-weight: 600;
 }
+.boton-actualizar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--verde);
+  background: var(--verde-claro);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  transition: background 0.15s;
+}
+.boton-actualizar:hover  { background: #d7eee2; }
+.boton-actualizar:active { transform: scale(0.96); }
+.icono-actualizar { display: inline-block; }
+.icono-actualizar.girando { animation: girar 0.6s linear; }
+@keyframes girar { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
 /* ── CONTENIDO ── */
 .contenido { padding: 28px 32px; }
@@ -177,7 +197,7 @@ body {
   border-radius: var(--radio-pequeño);
   padding: 14px 16px;
   cursor: pointer;
-  font-family: 'Nunito', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   text-align: left;
   margin-bottom: 10px;
   transition: all 0.15s;
@@ -217,7 +237,7 @@ body {
 .boton-pequeño {
   border: none; border-radius: 8px; padding: 6px 12px;
   font-size: 12px; font-weight: 700; cursor: pointer;
-  font-family: 'Nunito', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 .boton-pequeño.editar   { background: var(--verde-claro); color: var(--verde); }
 .boton-pequeño.eliminar { background: var(--rojo-claro);  color: var(--rojo);  }
@@ -232,7 +252,7 @@ body {
   border: 2px solid var(--borde);
   border-radius: var(--radio-pequeño);
   font-size: 15px;
-  font-family: 'Nunito', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-weight: 600;
   background: var(--fondo);
   color: var(--texto);
@@ -248,7 +268,7 @@ body {
   border-radius: var(--radio-pequeño);
   font-size: 15px;
   font-weight: 800;
-  font-family: 'Nunito', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -261,7 +281,7 @@ body {
   border-radius: var(--radio-pequeño);
   font-size: 15px;
   font-weight: 700;
-  font-family: 'Nunito', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   cursor: pointer;
   margin-left: 8px;
 }
@@ -407,6 +427,8 @@ body {
   .barra-superior { padding: 14px 16px; }
   .barra-superior-titulo { font-size: 17px; }
   .barra-superior-fecha { font-size: 12px; padding: 6px 10px; }
+  .boton-actualizar { padding: 8px 10px; }
+  .texto-actualizar { display: none; }
 
   .contenido { padding: 16px; }
 
@@ -443,7 +465,7 @@ body {
   background: transparent;
   border: none;
   color: rgba(255,255,255,0.65);
-  font-family: 'Nunito', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -453,56 +475,4 @@ body {
 .nav-inferior-boton.activo { color: white; }
 .nav-inferior-boton span:first-child { font-size: 22px; }
 
-/* ══ SECCIÓN DESCARGA APK ══ */
-.seccion-descarga {
-  background: linear-gradient(135deg, var(--verde) 0%, #0f5c3e 100%);
-  border-radius: var(--radio);
-  padding: 28px 24px;
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-.descarga-texto h3 {
-  font-size: 20px;
-  font-weight: 800;
-  color: white;
-  margin-bottom: 6px;
-}
-.descarga-texto p {
-  font-size: 14px;
-  color: rgba(255,255,255,0.75);
-  max-width: 320px;
-  line-height: 1.5;
-}
-.boton-descarga-apk {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: white;
-  color: var(--verde);
-  border: none;
-  border-radius: 50px;
-  padding: 14px 28px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
-  text-decoration: none;
-  white-space: nowrap;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  transition: transform 0.15s, box-shadow 0.15s;
-}
-.boton-descarga-apk:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-}
-.boton-descarga-apk span { font-size: 22px; }
 
-@media (max-width: 640px) {
-  .seccion-descarga { flex-direction: column; text-align: center; }
-  .descarga-texto p { max-width: 100%; }
-  .boton-descarga-apk { width: 100%; justify-content: center; }
-}
